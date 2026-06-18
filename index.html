@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Magical Surprise for D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0B1528 0%, #1D2D44 70%, #2E4765 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- Night Sky Elements --- */
+        .moon {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: -20px 20px 0 0 #f9f6e2;
+            filter: drop-shadow(0 0 15px rgba(249, 246, 226, 0.4));
+        }
+
+        /* Twinkling Stars & Light Dots Generator Background */
+        .star-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        .light-dot {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,223,132,0) 70%);
+            border-radius: 50%;
+            animation: floatGlow 4s infinite ease-in-out;
+        }
+
+        /* --- Environment --- */
+        .grass {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25%;
+            background: linear-gradient(to bottom, #1B4D3E 0%, #0F3427 100%);
+            border-top: 6px solid #2D7A5E;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        #container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* --- Highlighted Messages --- */
+        #message-box {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 500px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 0 20px rgba(255,255,255,0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #message {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- Beautiful Glowing Buttons --- */
+        .btn {
+            position: absolute;
+            bottom: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 35px;
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.6);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 0 35px rgba(255, 71, 87, 0.9);
+        }
+        
+        .btn span {
+            display: block;
+            font-size: 13px;
+            font-weight: normal;
+            opacity: 0.9;
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Dog Assembly --- */
+        #dog-container {
+            position: absolute;
+            bottom: 22%; 
+            left: -160px;
+            width: 140px;
+            height: 140px;
+            transition: left 0.5s linear;
+        }
+
+        .dog {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Multi-Flower Bouquet in Mouth */
+        #flowers-bouquet {
+            position: absolute;
+            left: 50px;
+            top: 52px;
+            width: 55px;
+            height: 55px;
+            display: none;
+            z-index: 5;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        }
+
+        /* --- Animations --- */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0px); opacity: 0.5; }
+            50% { transform: translateY(-20px); opacity: 1; }
+        }
+
+        @keyframes run {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-35deg); }
+        }
+
+        .running {
+            animation: run 0.25s infinite linear;
+        }
+
+        .waving #left-paw {
+            transform-origin: 25px 85px;
+            animation: wave 0.4s infinite ease-in-out;
+        }
+
+        .smiling #mouth {
+            d: path("M 56 53 Q 62 64 68 53");
+        }
+        .smiling #blush-left, .smiling #blush-right {
+            fill: rgba(255, 107, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="star-container" id="stars-bg"></div>
+    <div class="moon"></div>
+    <div class="grass"></div>
+
+    <div id="container">
+        <div id="message-box">
+            <div id="message"></div>
+        </div>
+        
+        <button id="action-btn" class="btn"></button>
+
+        <div id="dog-container">
+            <svg id="flowers-bouquet" viewBox="0 0 120 120">
+                <path d="M 40 60 Q 15 90 10 95 M 40 60 Q 30 95 30 100 M 40 60 Q 50 90 55 95" stroke="#2ed573" stroke-width="4" fill="none"/>
+                <circle cx="40" cy="40" r="10" fill="#ffa502"/>
+                <circle cx="40" cy="22" r="12" fill="#ff4757"/><circle cx="40" cy="58" r="12" fill="#ff4757"/>
+                <circle cx="22" cy="40" r="12" fill="#ff4757"/><circle cx="58" cy="40" r="12" fill="#ff4757"/>
+                <circle cx="15" cy="65" r="7" fill="#ff7f50"/>
+                <circle cx="15" cy="53" r="9" fill="#ff6b81"/><circle cx="15" cy="77" r="9" fill="#ff6b81"/>
+                <circle cx="3" cy="65" r="9" fill="#ff6b81"/><circle cx="27" cy="65" r="9" fill="#ff6b81"/>
+                <circle cx="65" cy="30" r="7" fill="#ffd32a"/>
+                <circle cx="65" cy="18" r="9" fill="#ff4757"/><circle cx="65" cy="42" r="9" fill="#ff4757"/>
+                <circle cx="53" cy="30" r="9" fill="#ff4757"/><circle cx="77" cy="30" r="9" fill="#ff4757"/>
+            </svg>
+
+            <svg class="dog" viewBox="0 0 100 100">
+                <path d="M 15 80 Q 2 68 8 55" stroke="#ffffff" stroke-width="9" stroke-linecap="round" fill="none"/> <ellipse cx="40" cy="75" rx="26" ry="21" fill="#ffffff" /> <circle cx="25" cy="93" r="8" fill="#eaeaea" /> <circle cx="55" cy="93" r="8" fill="#eaeaea" /> <circle cx="60" cy="45" r="23" fill="#ffffff" /> <circle id="blush-left" cx="46" cy="50" r="4" fill="none" />
+                <circle id="blush-right" cx="72" cy="50" r="4" fill="none" />
+                <ellipse cx="40" cy="32" rx="7" ry="14" fill="#e0e0e0" transform="rotate(-12 40 32)"/>
+                <ellipse cx="80" cy="32" rx="7" ry="14" fill="#e0e0e0" transform="rotate(12 80 32)"/>
+                <circle cx="54" cy="41" r="3" fill="#111" /> <circle cx="68" cy="41" r="3" fill="#111" /> <ellipse cx="62" cy="49" rx="6" ry="4" fill="#e5e5e5" /> <circle cx="62" cy="47" r="2.5" fill="#000" /> <path id="mouth" d="M 57 53 Q 62 57 67 53" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none" /> <circle id="left-paw" cx="44" cy="76" r="7.5" fill="#ffffff" /> <circle cx="62" cy="76" r="7.5" fill="#ffffff" /> 
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        // Generate Starry Night Dynamic Environment
+        const starsBg = document.getElementById('stars-bg');
+        for (let i = 0; i < 60; i++) {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = star.style.height = (Math.random() * 3 + 1) + 'px';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsBg.appendChild(star);
+        }
+        for (let i = 0; i < 15; i++) {
+            let dot = document.createElement('div');
+            dot.classList.add('light-dot');
+            dot.style.width = dot.style.height = (Math.random() * 15 + 10) + 'px';
+            dot.style.top = Math.random() * 80 + '%';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.animationDelay = Math.random() * 4 + 's';
+            starsBg.appendChild(dot);
+        }
+
+        const dogContainer = document.getElementById('dog-container');
+        const messageBox = document.getElementById('message-box');
+        const message = document.getElementById('message');
+        const actionBtn = document.getElementById('action-btn');
+        const bouquet = document.getElementById('flowers-bouquet');
+        const dogSvg = document.querySelector('.dog');
+
+        // Scene 1: Arrival
+        setTimeout(() => {
+            dogContainer.classList.add('running');
+            dogContainer.style.left = '22%';
+            
+            setTimeout(() => {
+                dogContainer.classList.remove('running');
+                dogContainer.classList.add('waving');
+                displayMessage("Hello Devanshi, My Name is Tom, Vansh made me");
+                displayButton("Yaha Click karo", runAway);
+            }, 1600);
+        }, 600);
+
+        // Scene 2: Running to search
+        function runAway() {
+            clearMessage();
+            clearButton();
+            dogContainer.classList.remove('waving');
+            dogContainer.classList.add('running');
+            
+            dogContainer.style.transition = "left 1.1s linear";
+            dogContainer.style.left = '115%'; 
+
+            setTimeout(() => {
+                dogContainer.classList.remove('running');
+                displayMessage("Ruko yaha ! Me abhi ata hun");
+                
+                // Scene 3: Returns WITHOUT flowers first to ask a question
+                setTimeout(() => {
+                    clearMessage();
+                    dogContainer.style.transform = "scaleX(-1)"; // Face left
+                    dogContainer.classList.add('running');
+                    dogContainer.style.transition = "left 1.5s linear";
+                    dogContainer.style.left = '65%'; 
+
+                    setTimeout(() => {
+                        dogContainer.classList.remove('running');
+                        displayMessage("You Like flowers ??");
+                        displayButton("Yes", fetchFlowers); // When clicked, triggers the next search sequence
+                    }, 1500);
+                }, 1800);
+
+            }, 1100);
+        }
+
+        // Scene 3.5: User clicked "Yes", Tom goes back out to grab the flower bouquet
+        function fetchFlowers() {
+            clearMessage();
+            clearButton();
+            dogContainer.style.transform = "scaleX(1)"; // Turn right to run away again
+            dogContainer.classList.add('running');
+            dogContainer.style.transition = "left 2.1s linear";
+            dogContainer.style.left = '115%';
+
+            setTimeout(() => {
+                dogContainer.classList.remove('running');
+                displayMessage("Ruko! Me abhi lekar aya... 🏃‍♂️💨");
+
+                // Scene 4: Tom finally returns with flowers
+                setTimeout(() => {
+                    clearMessage();
+                    bouquet.style.display = 'block'; // Bouquet is now visible in mouth!
+                    dogContainer.style.transform = "scaleX(-1)"; // Turn left to walk back in
+                    dogContainer.classList.add('running');
+                    dogContainer.style.transition = "left 1.5s linear";
+                    dogContainer.style.left = '65%';
+
+                    setTimeout(() => {
+                        dogContainer.classList.remove('running');
+                        displayMessage("Tadaa, Flowers for you!🌹✨");
+                        displayButton("loo naa Jaldi", finalSmile);
+                    }, 1500);
+                }, 1500);
+
+            }, 1100);
+        }
+
+        // Scene 5: Proposal Acceptance Screen
+        function finalSmile() {
+            clearButton();
+            dogSvg.classList.add('smiling');
+            displayMessage("Have a Great Day Dvnsi❤️");
+        }
+
+        // Display Utilities
+        function displayMessage(text) {
+            message.innerHTML = text;
+            messageBox.style.opacity = '1';
+            messageBox.style.transform = 'translateX(-50%) translateY(0)';
+        }
+
+        // Clear Utilities
+        function clearMessage() {
+            messageBox.style.opacity = '0';
+            messageBox.style.transform = 'translateX(-50%) translateY(-10px)';
+        }
+
+        function displayButton(text, eventTarget) {
+            actionBtn.innerHTML = text;
+            actionBtn.style.display = 'block';
+            actionBtn.onclick = eventTarget;
+        }
+
+        function clearButton() {
+            actionBtn.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
